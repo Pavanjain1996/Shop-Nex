@@ -30,7 +30,7 @@ def get_product_by_id(request, product_id):
         return JsonResponse({
             "Message": f"Error connecting to fakestore service", 
             "Exception" : str(exc)
-        }, safe=False, status=500)
+        }, safe=False, status=400)
 
     return JsonResponse(response.json(), safe=False, status=200)
 
@@ -58,7 +58,7 @@ def get_products_by_category(request, category):
             return JsonResponse({
                 "Message": "Invalid category", 
                 "Exception" : f"No products for category : {category}"
-            }, safe=False, status=400)
+            }, safe=False, status=404)
     except Exception as exc:
         return JsonResponse({
             "Message": f"Error connecting to fakestore service", 

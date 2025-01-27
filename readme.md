@@ -10,6 +10,14 @@ This project is a comprehensive e-commerce platform developed as part of capston
 
 ---
 
+### Superuser Details
+
+- **Uername**: `admin`
+- **Email**: `admin@admin.com`
+- **Password**: `admin`
+
+---
+
 The project begins with the integration of a third-party API, **FakeStoreAPI**, to provide core e-commerce functionality. The following features are implemented:
 
 - **Listing All Products**: Fetches and displays a comprehensive list of products.

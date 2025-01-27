@@ -1,6 +1,10 @@
 import requests
 import json
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+
+from .serializers import UserSerializer
 
 FAKE_STORE_BASE_URL = "https://fakestoreapi.com"
 
@@ -67,3 +71,17 @@ def get_products_by_category(request, category):
 
     return JsonResponse(response.json(), safe=False, status=200)
 
+@require_http_methods(["POST"])
+@csrf_exempt
+def register_user(request):
+    data = json.loads(request.body)
+    user_serializer = UserSerializer(data=data)
+    if user_serializer.is_valid():
+        created_user = user_serializer.save()
+        return JsonResponse({
+            'Message':  'User created successfully!', 
+            'Username': created_user.email, 
+            'Action': 'Please login to get the access token!'
+        }, safe=False, status=200)
+    else:
+        return JsonResponse(user_serializer.errors, safe=False, status=400)

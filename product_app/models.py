@@ -12,10 +12,12 @@ class BaseModel(models.Model):
 
 class User(BaseModel, AbstractUser):
     email = models.EmailField(unique=True)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
-    address = models.TextField(blank=True, null=True)
+    first_name = models.CharField(max_length=150, blank=False, null=False)
+    last_name = models.CharField(max_length=150, blank=False, null=False)
+    phone_number = models.CharField(max_length=15, blank=False, null=False)
+    address = models.TextField(blank=False, null=False)
     
-    REQUIRED_FIELDS = ['email']
+    REQUIRED_FIELDS = ['email', 'first_name', 'last_name', 'phone_number', 'address']
     USERNAME_FIELD = 'username'
 
     def __str__(self):

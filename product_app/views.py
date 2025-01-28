@@ -1,14 +1,18 @@
 import requests
 import json
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth import authenticate
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, ProductSerializer
+from .models import User, Product
+from .utils import generate_signed_token_for_user, token_required
 
 FAKE_STORE_BASE_URL = "https://fakestoreapi.com"
 
-def get_products(request):
+def get_fakestore_products(request):
     products_url = f"{FAKE_STORE_BASE_URL}/products"
 
     try:
@@ -22,7 +26,7 @@ def get_products(request):
 
     return JsonResponse(response.json(), safe=False, status=200)
 
-def get_product_by_id(request, product_id):
+def get_fakestore_product_by_id(request, product_id):
     product_url = f"{FAKE_STORE_BASE_URL}/products/{product_id}"
 
     try:
@@ -38,7 +42,7 @@ def get_product_by_id(request, product_id):
 
     return JsonResponse(response.json(), safe=False, status=200)
 
-def get_product_categories(request):
+def get_fakestore_product_categories(request):
     products_url = f"{FAKE_STORE_BASE_URL}/products/categories"
 
     try:
@@ -52,7 +56,7 @@ def get_product_categories(request):
 
     return JsonResponse(response.json(), safe=False, status=200)
 
-def get_products_by_category(request, category):
+def get_fakestore_products_by_category(request, category):
     products_url = f"{FAKE_STORE_BASE_URL}/products/category/{category}"
 
     try:
@@ -85,3 +89,35 @@ def register_user(request):
         }, safe=False, status=200)
     else:
         return JsonResponse(user_serializer.errors, safe=False, status=400)
+
+@require_http_methods(["POST"])
+@csrf_exempt
+def login_user(request):
+    data = json.loads(request.body)
+    username = data.get('username', '')
+    password = data.get('password', '')
+    if not username or not password:
+        return JsonResponse({'Message': 'Username and Password are required fields.'}, safe=False, status=400)
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        return JsonResponse({'Message': 'Invalid Username!'}, safe=False, status=400)
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        return JsonResponse({
+                'Message': 'Login successful!',
+                'Username': user.username,
+                'Token': generate_signed_token_for_user(user),
+                "Expiry": "3600 seconds"
+            },
+            safe=False,
+            status=200
+        )
+    else:
+        return JsonResponse({'Message': 'Incorrect Password!'}, safe=False, status=401)
+
+@token_required
+def get_products(request):
+    products = Product.objects.all()
+    product_serializer = ProductSerializer(products, many=True)
+    return JsonResponse({'Products': product_serializer.data}, safe=False, status=200)

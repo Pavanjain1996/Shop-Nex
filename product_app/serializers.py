@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import User
+from django.db.models import Avg
+from .models import User, Product
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,3 +28,27 @@ class UserSerializer(serializers.ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+
+class ProductSerializer(serializers.ModelSerializer):
+    category = serializers.StringRelatedField()  # To show category name
+    ratings = serializers.SerializerMethodField()  # Custom field for rating details
+
+    class Meta:
+        model = Product
+        fields = ['id', 'name', 'description', 'price', 'category', 'ratings']
+
+    def get_ratings(self, obj):
+        """
+        Custom method to calculate rating details.
+        Args:
+            obj (Product): The product instance.
+        Returns:
+            dict: Rating details with count and average rating.
+        """
+        ratings = obj.ratings.all()  # Fetch related ratings
+        count = ratings.count()
+        average = ratings.aggregate(average=Avg('rating'))['average']
+        return {
+            'count': count,
+            'average': round(average, 2) if average else None
+        }

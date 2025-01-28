@@ -16,7 +16,8 @@ class User(BaseModel, AbstractUser):
     last_name = models.CharField(max_length=150, blank=False, null=False)
     phone_number = models.CharField(max_length=15, blank=False, null=False)
     address = models.TextField(blank=False, null=False)
-    
+    username = models.CharField(max_length=150, unique=True) 
+
     REQUIRED_FIELDS = ['email', 'first_name', 'last_name', 'phone_number', 'address']
     USERNAME_FIELD = 'username'
 

@@ -16,7 +16,7 @@ class ProductAPITests(TestCase):
         mock_get.return_value.status_code = 200
 
         # Test the list all products API endpoint
-        response = self.client.get(reverse('list_all_products'))
+        response = self.client.get(reverse('list_all_fakestore_products'))
         
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), mock_response)
@@ -31,7 +31,7 @@ class ProductAPITests(TestCase):
         mock_get.return_value.status_code = 200
 
         # Test the get product by ID API
-        response = self.client.get(reverse('get_product_by_id', args=[product_id]))
+        response = self.client.get(reverse('get_fakestore_product_by_id', args=[product_id]))
         
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), mock_response)
@@ -43,7 +43,7 @@ class ProductAPITests(TestCase):
         mock_get.return_value.status_code = 200
 
         # Test the list categories API
-        response = self.client.get(reverse('get_all_product_categories'))
+        response = self.client.get(reverse('get_all_fakestore_product_categories'))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), mock_response)
@@ -59,7 +59,7 @@ class ProductAPITests(TestCase):
         mock_get.return_value.status_code = 200
 
         # Test the get products by category API
-        response = self.client.get(reverse('get_all_products_by_category', args=[category]))
+        response = self.client.get(reverse('get_all_fakestore_products_by_category', args=[category]))
         print(response.status_code)
 
         self.assertEqual(response.status_code, 200)

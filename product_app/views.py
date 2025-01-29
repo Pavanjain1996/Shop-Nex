@@ -1,17 +1,22 @@
 import requests
 import json
+from urllib.parse import urlencode
 
 from django.http import JsonResponse
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth import authenticate
 
 from .serializers import UserSerializer, ProductSerializer
+from django.core.paginator import Paginator
 from .models import User, Product
 from .utils import generate_signed_token_for_user, token_required
 
 FAKE_STORE_BASE_URL = "https://fakestoreapi.com"
+PRODUCT_PAGE_SIZE = 10
 
+@require_http_methods(["GET"])
 def get_fakestore_products(request):
     products_url = f"{FAKE_STORE_BASE_URL}/products"
 
@@ -26,6 +31,7 @@ def get_fakestore_products(request):
 
     return JsonResponse(response.json(), safe=False, status=200)
 
+@require_http_methods(["GET"])
 def get_fakestore_product_by_id(request, product_id):
     product_url = f"{FAKE_STORE_BASE_URL}/products/{product_id}"
 
@@ -42,6 +48,7 @@ def get_fakestore_product_by_id(request, product_id):
 
     return JsonResponse(response.json(), safe=False, status=200)
 
+@require_http_methods(["GET"])
 def get_fakestore_product_categories(request):
     products_url = f"{FAKE_STORE_BASE_URL}/products/categories"
 
@@ -56,6 +63,7 @@ def get_fakestore_product_categories(request):
 
     return JsonResponse(response.json(), safe=False, status=200)
 
+@require_http_methods(["GET"])
 def get_fakestore_products_by_category(request, category):
     products_url = f"{FAKE_STORE_BASE_URL}/products/category/{category}"
 
@@ -86,7 +94,7 @@ def register_user(request):
             'Message':  'User created successfully!', 
             'Username': created_user.email, 
             'Action': 'Please login to get the access token!'
-        }, safe=False, status=200)
+        }, safe=False, status=201)
     else:
         return JsonResponse(user_serializer.errors, safe=False, status=400)
 
@@ -116,8 +124,55 @@ def login_user(request):
     else:
         return JsonResponse({'Message': 'Incorrect Password!'}, safe=False, status=401)
 
+@require_http_methods(["GET"])
 @token_required
 def get_products(request):
+    page_number = int(request.GET.get('page', 1))
+    if page_number < 1:
+        return JsonResponse({'error': 'Invalid page number, it should be a positive number',}, status=400)
+    
+    page_size = min(int(request.GET.get('page_size', PRODUCT_PAGE_SIZE)), PRODUCT_PAGE_SIZE)
+
     products = Product.objects.all()
-    product_serializer = ProductSerializer(products, many=True)
-    return JsonResponse({'Products': product_serializer.data}, safe=False, status=200)
+    paginator = Paginator(products, page_size)
+
+    try:
+        paginated_products = paginator.page(page_number)
+    except:
+        return JsonResponse({
+            'error': 'Invalid page number',
+            'total_pages': paginator.num_pages
+        }, status=400)
+
+    product_serializer = ProductSerializer(paginated_products, many=True)
+
+    base_url = request.build_absolute_uri(reverse('get_all_products'))
+
+    # Generate next and previous URLs
+    next_url = f"{base_url}?{urlencode({'page': page_number + 1, 'page_size': page_size})}" if paginated_products.has_next() else None
+    prev_url = f"{base_url}?{urlencode({'page': page_number - 1, 'page_size': page_size})}" if paginated_products.has_previous() else None
+
+    response = {
+        'total_products': paginator.count,
+        'total_pages': paginator.num_pages,
+        'current_page': page_number,
+        'products': product_serializer.data
+    }
+    if prev_url:
+        response['previous'] = prev_url
+    if next_url:
+        response['next'] = next_url
+
+    return JsonResponse(response, safe=False, status=200)
+
+@require_http_methods(["GET"])
+@token_required
+def get_product_by_id(request, product_id):
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        return JsonResponse({'Message': 'Invalid Product ID!'}, safe=False, status=400)
+    
+    product_serializer = ProductSerializer(product)
+
+    return JsonResponse(product_serializer.data, safe=False, status=200)

@@ -1,20 +1,23 @@
 import requests
 import json
+from uuid import UUID
 from urllib.parse import urlencode
 
 from django.http import JsonResponse
 from django.urls import reverse
+from django.db.models import F
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth import authenticate
 
-from .serializers import UserSerializer, ProductSerializer
+from .serializers import UserSerializer, ProductSerializer, CartSerializer
 from django.core.paginator import Paginator
-from .models import User, Product
+from .models import User, Product, Cart
 from .utils import generate_signed_token_for_user, token_required
 
 FAKE_STORE_BASE_URL = "https://fakestoreapi.com"
 PRODUCT_PAGE_SIZE = 10
+MAX_ITEMS_ALLOWED = 500
 
 @require_http_methods(["GET"])
 def get_fakestore_products(request):
@@ -86,7 +89,7 @@ def get_fakestore_products_by_category(request, category):
 @require_http_methods(["POST"])
 @csrf_exempt
 def register_user(request):
-    data = json.loads(request.body)
+    data = json.loads(request.body or '{}')
     user_serializer = UserSerializer(data=data)
     if user_serializer.is_valid():
         created_user = user_serializer.save()
@@ -101,7 +104,7 @@ def register_user(request):
 @require_http_methods(["POST"])
 @csrf_exempt
 def login_user(request):
-    data = json.loads(request.body)
+    data = json.loads(request.body or '{}')
     username = data.get('username', '')
     password = data.get('password', '')
     if not username or not password:
@@ -125,11 +128,10 @@ def login_user(request):
         return JsonResponse({'Message': 'Incorrect Password!'}, safe=False, status=401)
 
 @require_http_methods(["GET"])
-@token_required
 def get_products(request):
     page_number = int(request.GET.get('page', 1))
     if page_number < 1:
-        return JsonResponse({'error': 'Invalid page number, it should be a positive number',}, status=400)
+        return JsonResponse({'error': 'Invalid page number, it should be a positive number'}, status=400)
     
     page_size = min(int(request.GET.get('page_size', PRODUCT_PAGE_SIZE)), PRODUCT_PAGE_SIZE)
 
@@ -166,7 +168,6 @@ def get_products(request):
     return JsonResponse(response, safe=False, status=200)
 
 @require_http_methods(["GET"])
-@token_required
 def get_product_by_id(request, product_id):
     try:
         product = Product.objects.get(id=product_id)
@@ -176,3 +177,75 @@ def get_product_by_id(request, product_id):
     product_serializer = ProductSerializer(product)
 
     return JsonResponse(product_serializer.data, safe=False, status=200)
+
+@require_http_methods(["GET"])
+@token_required
+def display_cart(request):
+    cart_items = Cart.objects.filter(user=request.user_data['user_id'])
+    if not cart_items:
+        return JsonResponse({"Message": "Cart is empty!"}, safe=False, status=200)
+
+    serializer = CartSerializer(cart_items, many=True)
+    
+    total_amount = sum(item['amount'] for item in serializer.data)
+
+    return JsonResponse({
+        "cart_items": serializer.data,
+        "total_cart_amount": total_amount
+    }, safe=False, status=200)
+
+@require_http_methods(["POST"])
+@csrf_exempt
+@token_required
+def add_to_cart(request):
+    data = json.loads(request.body or '{}')
+    product_id = data.get('product_id')
+    if not product_id:
+        return JsonResponse({"Message": "Missing product id!"}, safe=False, status=400)
+    quantity = data.get('quantity')
+    if not quantity:
+        return JsonResponse({"Message": "Missing quantity for the product!"}, safe=False, status=400)
+    try:
+        quantity = int(quantity)
+        if quantity < 0:
+            return JsonResponse({"Message": "Invalid quantity!"}, safe=False, status=400)
+        if quantity > MAX_ITEMS_ALLOWED:
+            return JsonResponse({"Message": "Maximum quantity allowed is 500!"}, safe=False, status=400)
+    except Exception:
+        return JsonResponse({"Message": "Invalid quantity!"}, safe=False, status=400)
+
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        return JsonResponse({"Message": "Invalid product ID!"}, safe=False, status=400)
+    
+    cart = Cart.objects.filter(
+        user=User.objects.get(id=request.user_data['user_id']),
+        product=product
+    )
+    if cart and cart[0]:
+        total_quantity = cart[0].quantity + quantity
+        if total_quantity > MAX_ITEMS_ALLOWED:
+            return JsonResponse({
+                "Message": "Maximum quantity allowed is 500!",
+                "Current Quantity": cart[0].quantity
+            }, safe=False, status=400)
+        cart[0].quantity = total_quantity
+        cart[0].save()
+        return JsonResponse({
+            "Message": "Product already present in the cart",
+            "product": product.name,
+            "quantity_added": quantity,
+            'total_quantity': total_quantity
+        }, safe=False, status=201)
+    else:
+        Cart.objects.create(
+            user=User.objects.get(id=request.user_data['user_id']),
+            product=product,
+            quantity=quantity
+        )
+        return JsonResponse({
+            "Message": "Product added to cart",
+            "product": product.name,
+            "quantity": quantity
+        }, safe=False, status=201)

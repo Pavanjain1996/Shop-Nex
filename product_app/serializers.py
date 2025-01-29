@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db.models import Avg
-from .models import User, Product
+from .models import User, Product, Cart
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -52,3 +52,30 @@ class ProductSerializer(serializers.ModelSerializer):
             'count': count,
             'average': round(average, 2) if average else None
         }
+
+class CartSerializer(serializers.ModelSerializer):
+    product_id = serializers.ReadOnlyField(source='product.id')
+    product_name = serializers.ReadOnlyField(source='product.name')
+    product_price = serializers.ReadOnlyField(source='product.price')
+    amount = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Cart
+        fields = ['product_id', 'product_name', 'product_price', 'quantity', 'amount']
+        extra_kwargs = {
+            'user': {'write_only': True},
+            'product': {'write_only': True},
+            'quantity': {'required': True}
+        }
+
+    def get_amount(self, obj):
+        return obj.quantity * obj.product.price
+    
+    def create(self, validated_data):
+        """Handles cart object creation using only user_id, product_id, and quantity"""
+        print(validated_data)
+        user = validated_data.get('user')
+        product = validated_data.get('product')
+        quantity = validated_data.get('quantity')
+
+        return Cart.objects.create(user=user, product=product, quantity=quantity)

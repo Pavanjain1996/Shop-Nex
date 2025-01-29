@@ -70,12 +70,3 @@ class CartSerializer(serializers.ModelSerializer):
 
     def get_amount(self, obj):
         return obj.quantity * obj.product.price
-    
-    def create(self, validated_data):
-        """Handles cart object creation using only user_id, product_id, and quantity"""
-        print(validated_data)
-        user = validated_data.get('user')
-        product = validated_data.get('product')
-        quantity = validated_data.get('quantity')
-
-        return Cart.objects.create(user=user, product=product, quantity=quantity)

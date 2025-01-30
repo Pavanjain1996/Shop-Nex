@@ -77,22 +77,16 @@ This implementation leverages the stateless nature of JWT, where the token itsel
 
 The product services handle all operations related to products and cart management. Below are the implemented API routes along with their functionalities:  
 
----
-
 ### **1. List All Products**  
 - **Endpoint:** `GET /products`  
 - **Description:** Retrieves a paginated list of all products available on the website. By default, a maximum of **10 products per page** is returned. However, the number of products per page can be customized using query parameters.  
 - **Response:** Each response includes URLs for the **next** and **previous** pages (if applicable).  
 - **Authentication:** **Not required**  
 
----
-
 ### **2. Get Product by ID**  
 - **Endpoint:** `GET /product/<str:product_id>`  
 - **Description:** Fetches details of a specific product using its **product_id**.  
 - **Authentication:** **Not required**  
-
----
 
 ### **3. View Cart**  
 - **Endpoint:** `GET /cart`  
@@ -100,8 +94,6 @@ The product services handle all operations related to products and cart manageme
   - A breakdown of the total price for each product.  
   - The **final total amount** for the entire cart.  
 - **Authentication:** **Required** (User must provide a valid token)  
-
----
 
 ### **4. Add Product to Cart**  
 - **Endpoint:** `POST /cart/add`  
@@ -118,8 +110,6 @@ The product services handle all operations related to products and cart manageme
   ```
 - **Authentication:** **Required**  
 
----
-
 ### **5. Remove Product from Cart**  
 - **Endpoint:** `POST /cart/remove`  
 - **Description:** Removes an item completely or partially from the cart.  
@@ -134,8 +124,6 @@ The product services handle all operations related to products and cart manageme
   }
   ```
 - **Authentication:** **Required**  
-
----
 
 ### **Validations & Security Measures:**  
 ✅ **Authentication:** All cart-related operations require a **valid JWT token** for authorization.  

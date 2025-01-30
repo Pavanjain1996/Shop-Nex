@@ -207,7 +207,7 @@ def add_to_cart(request):
         return JsonResponse({"Message": "Missing quantity for the product!"}, safe=False, status=400)
     try:
         quantity = int(quantity)
-        if quantity < 0:
+        if quantity < 1:
             return JsonResponse({"Message": "Invalid quantity!"}, safe=False, status=400)
         if quantity > MAX_ITEMS_ALLOWED:
             return JsonResponse({"Message": "Maximum quantity allowed is 500!"}, safe=False, status=400)
@@ -249,3 +249,54 @@ def add_to_cart(request):
             "product": product.name,
             "quantity": quantity
         }, safe=False, status=201)
+
+@require_http_methods(["POST"])
+@csrf_exempt
+@token_required
+def remove_from_cart(request):
+    data = json.loads(request.body or '{}')
+    product_id = data.get('product_id')
+    if not product_id:
+        return JsonResponse({"Message": "Missing product id!"}, safe=False, status=400)
+    try:
+        product = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        return JsonResponse({"Message": "Invalid product ID!"}, safe=False, status=400)
+    cart = Cart.objects.filter(
+        user=User.objects.get(id=request.user_data['user_id']),
+        product=product
+    )
+    if cart and cart[0]:
+        quantity = data.get('quantity')
+        if not quantity:
+            cart[0].delete()
+            return JsonResponse({"Message": f"{product.name} is removed from your cart!",}, safe=False, status=400)
+        else:
+            try:
+                quantity = int(quantity)
+                if quantity < 1:
+                    return JsonResponse({"Message": "Invalid quantity!"}, safe=False, status=400)
+            except Exception:
+                return JsonResponse({"Message": "Invalid quantity!"}, safe=False, status=400)
+            if quantity > cart[0].quantity:
+                return JsonResponse({"Message": f"{quantity} quantity of {product.name} is not available in your cart!"}, safe=False, status=400)
+
+        total_quantity = cart[0].quantity - quantity
+        if total_quantity == 0:
+            cart[0].delete()
+            return JsonResponse({"Message": f"{product.name} is removed from your cart!",}, safe=False, status=201)
+        else:
+            cart[0].quantity = total_quantity
+            cart[0].save()
+            return JsonResponse({
+                "Message": f"{quantity} quantity of {product.name} have been removed from your cart!",
+                "product": product.name,
+                'total_quantity': total_quantity
+            }, safe=False, status=201)
+    else:
+        return JsonResponse({
+            "Message": "This product is not present in your cart",
+            "product": product.name,
+        }, safe=False, status=200)
+
+#TODO : Place order with all the items in the cart and generate a payment URL, once payment is done the order should be marked completed

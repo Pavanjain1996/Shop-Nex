@@ -72,3 +72,73 @@ To facilitate user registration and authentication in the project, two API route
 This implementation leverages the stateless nature of JWT, where the token itself contains the necessary information to authenticate the user, ensuring secure and efficient management of user sessions without the need for storing tokens or session data on the server.
 
 ---
+
+### **Product Services Overview**  
+
+The product services handle all operations related to products and cart management. Below are the implemented API routes along with their functionalities:  
+
+---
+
+### **1. List All Products**  
+- **Endpoint:** `GET /products`  
+- **Description:** Retrieves a paginated list of all products available on the website. By default, a maximum of **10 products per page** is returned. However, the number of products per page can be customized using query parameters.  
+- **Response:** Each response includes URLs for the **next** and **previous** pages (if applicable).  
+- **Authentication:** **Not required**  
+
+---
+
+### **2. Get Product by ID**  
+- **Endpoint:** `GET /product/<str:product_id>`  
+- **Description:** Fetches details of a specific product using its **product_id**.  
+- **Authentication:** **Not required**  
+
+---
+
+### **3. View Cart**  
+- **Endpoint:** `GET /cart`  
+- **Description:** Displays the user's cart, listing all products along with their quantities. The response includes:  
+  - A breakdown of the total price for each product.  
+  - The **final total amount** for the entire cart.  
+- **Authentication:** **Required** (User must provide a valid token)  
+
+---
+
+### **4. Add Product to Cart**  
+- **Endpoint:** `POST /cart/add`  
+- **Description:** Adds a product to the user's cart.  
+- **Behavior:**  
+  - If the product **already exists** in the cart, the given quantity is **added** to the existing quantity.  
+  - If the product is **not in the cart**, it is added as a new entry.  
+- **Request Body:**  
+  ```json
+  {
+      "product_id": "1311c455-ba36-43b9-a2a1-2422817f39e2",
+      "quantity": 5
+  }
+  ```
+- **Authentication:** **Required**  
+
+---
+
+### **5. Remove Product from Cart**  
+- **Endpoint:** `POST /cart/remove`  
+- **Description:** Removes an item completely or partially from the cart.  
+- **Behavior:**  
+  - If **quantity is specified**, only the given quantity is removed, and the cart is updated accordingly.  
+  - If **quantity is not specified**, the product is removed **entirely** from the cart.  
+- **Request Body:**  
+  ```json
+  {
+      "product_id": "1311c455-ba36-43b9-a2a1-2422817f39e2",
+      "quantity": 2
+  }
+  ```
+- **Authentication:** **Required**  
+
+---
+
+### **Validations & Security Measures:**  
+✅ **Authentication:** All cart-related operations require a **valid JWT token** for authorization.  
+✅ **Product & Cart Validations:** Proper validation is implemented to ensure: data integrity.
+
+---

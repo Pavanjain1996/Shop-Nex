@@ -35,7 +35,7 @@ These URLs lay the foundation for the application by providing dynamic, real-tim
 
 ---
 
-### User Registration and Login Summary:
+### User Registration and Login Summary
 
 To facilitate user registration and authentication in the project, two API routes have been added:
 

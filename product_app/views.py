@@ -12,8 +12,9 @@ from django.contrib.auth import authenticate
 
 from .serializers import UserSerializer, ProductSerializer, CartSerializer
 from django.core.paginator import Paginator
-from .models import User, Product, Cart
-from .utils import generate_signed_token_for_user, token_required
+from .models import User, Product, Cart, Order
+from .authentication_utils import generate_signed_token_for_user, token_required
+from .payment_utils import create_payment_link
 
 FAKE_STORE_BASE_URL = "https://fakestoreapi.com"
 PRODUCT_PAGE_SIZE = 10
@@ -299,4 +300,10 @@ def remove_from_cart(request):
             "product": product.name,
         }, safe=False, status=200)
 
-#TODO : Place order with all the items in the cart and generate a payment URL, once payment is done the order should be marked completed
+@require_http_methods(["GET"])
+@token_required
+def checkout_from_cart(request):
+    order = Order.objects.get()
+    res = create_payment_link(order)
+    print(res)
+    return JsonResponse({"Message": "Done"}, safe=False, status=200)

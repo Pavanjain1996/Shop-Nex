@@ -119,3 +119,21 @@ class OrderItem(BaseModel):
 
     def __str__(self):
         return f'{self.quantity} x {self.product.name} in Order {self.order.id}'
+
+class Payment(BaseModel):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('SUCCESS', 'Success'),
+        ('FAILED', 'Failed')
+    ]
+    id = models.CharField(primary_key=True, max_length=255)
+    order = models.ForeignKey(
+        Order, 
+        on_delete=models.CASCADE, 
+        related_name='payments'
+    )
+    payment_link = models.URLField()
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='PENDING')
+
+    def __str__(self):
+        return f'Payment {self.payment_id} - {self.status}'

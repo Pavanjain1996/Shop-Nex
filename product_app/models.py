@@ -115,7 +115,7 @@ class OrderItem(BaseModel):
         related_name='order_items'
     )
     quantity = models.PositiveIntegerField(default=1)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return f'{self.quantity} x {self.product.name} in Order {self.order.id}'
@@ -136,4 +136,4 @@ class Payment(BaseModel):
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='PENDING')
 
     def __str__(self):
-        return f'Payment {self.payment_id} - {self.status}'
+        return f'Payment {self.id} - {self.status}'

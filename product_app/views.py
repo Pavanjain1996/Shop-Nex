@@ -12,7 +12,7 @@ from django.contrib.auth import authenticate
 
 from .serializers import UserSerializer, ProductSerializer, CartSerializer
 from django.core.paginator import Paginator
-from .models import User, Product, Cart, Order
+from .models import User, Product, Cart, Order, OrderItem, Payment
 from .authentication_utils import generate_signed_token_for_user, token_required
 from .payment_utils import create_payment_link
 
@@ -303,7 +303,41 @@ def remove_from_cart(request):
 @require_http_methods(["GET"])
 @token_required
 def checkout_from_cart(request):
-    order = Order.objects.get()
-    res = create_payment_link(order)
-    print(res)
-    return JsonResponse({"Message": "Done"}, safe=False, status=200)
+    user = User.objects.get(id=request.user_data['user_id'])
+    cart_items =  Cart.objects.filter(user=user)
+    if not cart_items:
+        return JsonResponse({"Message": "Cart is empty!"}, safe=False, status=200)
+
+    # Create an empty order
+    order = Order.objects.create(user=user, total_amount=0)
+
+    # Create order items from each cart item
+    total_amount = 0
+    for cart_item in cart_items:
+        amount = cart_item.product.price*cart_item.quantity
+        order_item = OrderItem.objects.create(
+            order=order,
+            product=cart_item.product,
+            quantity=cart_item.quantity,
+            amount=amount
+        )
+        total_amount += amount
+    
+    # Update amount for the order
+    order.total_amount = total_amount
+    order.save()
+
+    # Generate payment link
+    payment_meta = create_payment_link(order)
+    payment_id = payment_meta.get('id')
+    payment_link = payment_meta.get('short_url')
+    payment = Payment.objects.create(
+        id=payment_id,
+        order=order,
+        payment_link=payment_link
+    )
+
+    return JsonResponse({
+        "Message": "Your order has been created, please use the given payment link and complete the payment!",
+        "Payment Link": payment_link
+    }, safe=False, status=201)

@@ -18,23 +18,6 @@ This project is a comprehensive e-commerce platform developed as part of capston
 
 ---
 
-### Products listing from a 3rd Party API
-
-The project begins with the integration of a third-party API, **FakeStoreAPI**, to provide core e-commerce functionality. The following features are implemented:
-
-- **Listing All Products**: Fetches and displays a comprehensive list of products.
-    - URL : `GET /fs/products`
-- **Fetching Product by ID**: Retrieves detailed information about a specific product based on its unique ID.
-    - URL : `GET /fs/products/{product_id}`
-- **Fetching All Product Categories**: Lists all available product categories.
-    - URL : `GET /fs/products/categories`
-- **Fetching Products by Category**: Allows users to view products filtered by a specific category.
-    - URL : `GET /fs/products/category/{category}`
-
-These URLs lay the foundation for the application by providing dynamic, real-time product data, but they are limited to product listing functionalities. To enhance the e-commerce experience, we will now focus on building the backend to support additional operations, such as adding, updating, and deleting products, as well as enabling users to purchase items, add products to their cart, and implement other essential features.
-
----
-
 ### User Registration and Login Summary
 
 To facilitate user registration and authentication in the project, two API routes have been added:

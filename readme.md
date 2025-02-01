@@ -18,8 +18,7 @@ This project is a comprehensive e-commerce platform developed as part of capston
 
 ### Postman Collection
 
-- This project also includes a postman collection to execute all different kind of functionalities. The collection can be imported into postman and requests can be made.
-- Make sure to register a new user and perform all operations through that user, because existing parameters can be stale.
+- This project also includes a postman collection to execute all different kind of functionalities.
 
 ---
 
@@ -134,5 +133,138 @@ The product services handle all operations related to products and cart manageme
 ### **Validations & Security Measures:**  
 ✅ **Authentication:** All cart and order related operations require a **valid JWT token** for authorization.  
 ✅ **Product & Cart Validations:** Proper validation is implemented to ensure: data integrity.
+
+---
+
+### Deployment Steps for this application
+
+Here are the steps to deploy your Django application on AWS EC2:
+
+### **1. Set Up an AWS EC2 Instance**
+- Log in to your AWS account.
+- Navigate to **EC2 Dashboard** and launch a new instance.
+- Choose an **Amazon Machine Image (AMI)** (Ubuntu 20.04 recommended).
+- Select an instance type (e.g., t2.micro for free-tier).
+- Configure security group: Allow **HTTP (80)**, **HTTPS (443)**, and **SSH (22)**.
+- Generate and download a **.pem key pair** for SSH access.
+- Launch the instance and note the **public IP address**.
+
+### **2. Connect to the EC2 Instance**
+Run the following command from your local machine:
+```sh
+ssh -i your-key.pem ubuntu@your-ec2-public-ip
+```
+
+### **3. Update and Install Required Packages**
+```sh
+sudo apt update && sudo apt upgrade -y
+sudo apt install python3-pip python3-venv nginx -y
+```
+
+### **4. Clone Your Project**
+Transfer your Django project from GitHub or any repository:
+```sh
+git clone https://github.com/Pavanjain1996/capstone-project.git
+cd your-project-folder
+```
+
+### **5. Set Up Virtual Environment**
+```sh
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### **6. Configure Environment Variables**
+Edit `~/.bashrc` or `~/.profile` and add:
+```sh
+export SECRET_KEY="your-secret-key"
+export DEBUG=False
+```
+Then run:
+```sh
+source ~/.bashrc
+```
+
+### **7. Set Up the Database**
+In local we used `SQLIte` but for production usage we need to use PostgreSQL, below are steps to install and configure:
+```sh
+sudo apt install postgresql postgresql-contrib -y
+sudo -u postgres psql
+```
+Inside PostgreSQL shell:
+```sql
+CREATE DATABASE your_db;
+CREATE USER your_user WITH PASSWORD 'your_password';
+ALTER ROLE your_user SET client_encoding TO 'utf8';
+ALTER ROLE your_user SET default_transaction_isolation TO 'read committed';
+ALTER ROLE your_user SET timezone TO 'UTC';
+GRANT ALL PRIVILEGES ON DATABASE your_db TO your_user;
+\q
+```
+Update `DATABASES` settings in `settings.py` accordingly.
+
+### **8. Run Migrations and Collect Static Files**
+```sh
+python manage.py migrate
+python manage.py collectstatic
+```
+
+### **9. Set Up Gunicorn**
+```sh
+pip install gunicorn
+gunicorn --bind 0.0.0.0:8000 your_project.wsgi:application
+```
+
+### **10. Configure Nginx as Reverse Proxy**
+Create an Nginx config file:
+```sh
+sudo nano /etc/nginx/sites-available/your_project
+```
+Add the following:
+```
+server {
+    listen 80;
+    server_name your-ec2-public-ip;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+```
+Enable Nginx config:
+```sh
+sudo ln -s /etc/nginx/sites-available/your_project /etc/nginx/sites-enabled
+sudo systemctl restart nginx
+```
+
+### **11. Set Up Supervisor (Optional)**
+To keep Gunicorn running:
+```sh
+sudo apt install supervisor -y
+sudo nano /etc/supervisor/conf.d/your_project.conf
+```
+Add:
+```
+[program:your_project]
+command=/home/ubuntu/your_project/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:8000 your_project.wsgi:application
+directory=/home/ubuntu/your_project
+autostart=true
+autorestart=true
+stderr_logfile=/var/log/your_project.err.log
+stdout_logfile=/var/log/your_project.out.log
+```
+Save and run:
+```sh
+sudo supervisorctl reread
+sudo supervisorctl update
+sudo supervisorctl start your_project
+```
+
+### **12. Access the Application**
+Open **http://your-ec2-public-ip/** in a browser to see your Django app running!
 
 ---

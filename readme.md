@@ -164,7 +164,7 @@ sudo apt install python3-pip python3-venv nginx -y
 ### **4. Clone Your Project**
 Transfer your Django project from GitHub or any repository:
 ```sh
-git clone https://github.com/Pavanjain1996/capstone-project.git
+git clone https://github.com/Pavanjain1996/Shop-Nex.git
 cd your-project-folder
 ```
 

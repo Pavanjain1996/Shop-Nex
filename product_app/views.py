@@ -3,8 +3,9 @@ import json
 from uuid import UUID
 from urllib.parse import urlencode
 
-from django.http import JsonResponse
+from django.http import JsonResponse, QueryDict
 from django.urls import reverse
+from django.shortcuts import redirect
 from django.db.models import F
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
@@ -14,7 +15,7 @@ from .serializers import UserSerializer, ProductSerializer, CartSerializer
 from django.core.paginator import Paginator
 from .models import User, Product, Cart, Order, OrderItem, Payment
 from .authentication_utils import generate_signed_token_for_user, token_required
-from .payment_utils import create_payment_link
+from .payment_utils import create_payment_link, verify_payment
 
 PRODUCT_PAGE_SIZE = 10
 MAX_ITEMS_ALLOWED = 500
@@ -259,6 +260,9 @@ def checkout_from_cart(request):
     order.total_amount = total_amount
     order.save()
 
+    # Empty cart once order is created
+    Cart.objects.filter(user=user).delete()
+
     # Generate payment link
     payment_meta = create_payment_link(order)
     payment_id = payment_meta.get('id')
@@ -271,5 +275,41 @@ def checkout_from_cart(request):
 
     return JsonResponse({
         "Message": "Your order has been created, please use the given payment link and complete the payment!",
+        "Order ID": str(order.id),
         "Payment Link": payment_link
     }, safe=False, status=201)
+
+@require_http_methods(["GET"])
+def payment_callback(request):
+    payment = {
+        'payment_link_id': request.GET['razorpay_payment_link_id'],
+        'payment_link_reference_id': request.GET['razorpay_payment_link_reference_id'],
+        'payment_link_status': request.GET['razorpay_payment_link_status'],
+        'razorpay_payment_id': request.GET['razorpay_payment_id'],
+        'razorpay_signature': request.GET['razorpay_signature']
+    }
+    verified = verify_payment(payment)
+    if not verified:
+        JsonResponse({
+            "Message": "Unverified Request!"
+        }, safe=False, status=401)
+
+    payment_obj = Payment.objects.get(id=request.GET['razorpay_payment_link_id'])
+    payment_obj.status = 'SUCCESS'
+    payment_obj.save()
+
+    order = Order.objects.get(id=payment_obj.order.id)
+    order.status = "PROCESSING"
+    order.save()
+
+    params = QueryDict(mutable=True)
+    params['order_id'] = str(order.id)
+    path = reverse('completed_order')
+    return redirect(f'{path}?{params.urlencode()}')
+
+@require_http_methods(["GET"])
+def order_completed(request):
+    return JsonResponse({
+        "Message": "Your order is accepted!",
+        "Order reference id": str(request.GET['order_id'])
+    })

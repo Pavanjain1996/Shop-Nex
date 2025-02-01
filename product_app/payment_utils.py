@@ -13,10 +13,13 @@ def create_payment_link(order):
             "email": order.user.email,
             "contact": order.user.phone_number
         },
+        "callback_method": "get",
+        "callback_url": "http://localhost:8000/payment/callback",
         "notify": {
             "sms": True,
             "email": True
         },
+        "reference_id": str(order.id),
         "reminder_enable": True,
         "notes": {
             "Order ID": str(order.id),
@@ -24,3 +27,10 @@ def create_payment_link(order):
         }
     })
     return payment_link
+
+def verify_payment(payment):
+    try:
+        response = client.utility.verify_payment_link_signature(payment)
+    except razorpay.errors.SignatureVerificationError:
+        response = False
+    return response

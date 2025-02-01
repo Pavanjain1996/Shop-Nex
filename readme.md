@@ -108,15 +108,26 @@ The product services handle all operations related to products and cart manageme
   ```
 - **Authentication:** **Required**  
 
-### **5. Checkout from Cart**  
+### **6. Checkout from Cart**  
 - **Endpoint:** `POST /cart/checkout`  
 - **Description:** Creates an order for you and send you a payment link to complete the payment, to confirm your order
 - **Behavior:**  
   - It creates an order for all items in your cart and empties the cart.
 - **Authentication:** **Required** 
 
+### **7. Check order status**  
+- **Endpoint:** `POST /order/status`  
+- **Description:** Once the payment is completed from the payment link received in previous request, it verifies the payment and moves you order for processing. You can check the status of your order from this path
+- **Request Body:**  
+  ```json
+  {
+      "order_id": "0194481b-55cd-4f67-9eb3-8c3c9cd79588"
+  }
+  ```
+- **Authentication:** **Required** 
+
 ### **Validations & Security Measures:**  
-✅ **Authentication:** All cart-related operations require a **valid JWT token** for authorization.  
+✅ **Authentication:** All cart and order related operations require a **valid JWT token** for authorization.  
 ✅ **Product & Cart Validations:** Proper validation is implemented to ensure: data integrity.
 
 ---

@@ -313,3 +313,22 @@ def order_completed(request):
         "Message": "Your order is accepted!",
         "Order reference id": str(request.GET['order_id'])
     })
+
+@require_http_methods(["POST"])
+@csrf_exempt
+@token_required
+def order_status(request):
+    data = json.loads(request.body or '{}')
+    order_id = data.get('order_id')
+    print(data)
+    if not order_id:
+        return JsonResponse({"Message": "Missing order id!"}, safe=False, status=400)
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return JsonResponse({"Message": "Invalid order id!"}, safe=False, status=400)
+    
+    return JsonResponse({
+        "Message": "Status for your order!",
+        "Status": order.status
+    }, safe=False, status=400)

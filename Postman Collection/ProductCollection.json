@@ -1,0 +1,185 @@
+{
+	"info": {
+		"_postman_id": "d12a1c18-eb7f-471e-9ce6-11aa35ecb248",
+		"name": "ProductCollection",
+		"description": "This is a collection where you can try all the APIs from the project.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "25676462"
+	},
+	"item": [
+		{
+			"name": "Registration and Authentication",
+			"item": [
+				{
+					"name": "User Registration",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"testuser3\",\r\n    \"password\": \"test123\",\r\n    \"first_name\": \"Test\",\r\n    \"last_name\": \"User\",\r\n    \"email\": \"testuser3@admin.com\",\r\n    \"phone_number\": \"9898989898\",\r\n    \"address\": \"ABC Street\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8000/user/register/"
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"testuser3\",\r\n    \"password\": \"test123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8000/user/login/"
+					},
+					"response": []
+				}
+			],
+			"description": "All requests for user registration and authentication."
+		},
+		{
+			"name": "Product Service",
+			"item": [
+				{
+					"name": "List all products",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8000/products"
+					},
+					"response": []
+				},
+				{
+					"name": "Get product by ID",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8000/product/67bcdceb-2781-4408-9b09-1fb32241af82"
+					},
+					"response": []
+				},
+				{
+					"name": "Display cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNTFhMjAyNTEtODFjOS00MjFiLWJjNDUtOTM4NjE4ZWFkMDFkIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjMiLCJlbWFpbCI6InRlc3R1c2VyM0BhZG1pbi5jb20iLCJleHAiOjE3Mzg0MDE5ODIsImlhdCI6MTczODM5ODM4Mn0.qqqIItO1CznM7kD3WS0D0_w0Giz9WrTvwQjK_HmSR0A"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8000/cart"
+					},
+					"response": []
+				},
+				{
+					"name": "Add item in cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNTFhMjAyNTEtODFjOS00MjFiLWJjNDUtOTM4NjE4ZWFkMDFkIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjMiLCJlbWFpbCI6InRlc3R1c2VyM0BhZG1pbi5jb20iLCJleHAiOjE3Mzg0MDE5ODIsImlhdCI6MTczODM5ODM4Mn0.qqqIItO1CznM7kD3WS0D0_w0Giz9WrTvwQjK_HmSR0A"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"product_id\": \"1311c455-ba36-43b9-a2a1-2422817f39e2\",\r\n    \"quantity\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8000/cart/add/"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove product from cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNTFhMjAyNTEtODFjOS00MjFiLWJjNDUtOTM4NjE4ZWFkMDFkIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjMiLCJlbWFpbCI6InRlc3R1c2VyM0BhZG1pbi5jb20iLCJleHAiOjE3MzgzNTIxNDksImlhdCI6MTczODM0ODU0OX0.P5pZD7xv1VXm4AuKxapsX0CUFtvT3tCoEVaK0dO4-T8"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"product_id\": \"83e53062-b539-44d3-a16e-008bdc2b47a0\",\r\n    \"quantity\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8000/cart/remove/"
+					},
+					"response": []
+				},
+				{
+					"name": "Checkout from Cart",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNTFhMjAyNTEtODFjOS00MjFiLWJjNDUtOTM4NjE4ZWFkMDFkIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjMiLCJlbWFpbCI6InRlc3R1c2VyM0BhZG1pbi5jb20iLCJleHAiOjE3Mzg0MDE5ODIsImlhdCI6MTczODM5ODM4Mn0.qqqIItO1CznM7kD3WS0D0_w0Giz9WrTvwQjK_HmSR0A"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8000/cart/checkout"
+					},
+					"response": []
+				},
+				{
+					"name": "Check Order Status",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNTFhMjAyNTEtODFjOS00MjFiLWJjNDUtOTM4NjE4ZWFkMDFkIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjMiLCJlbWFpbCI6InRlc3R1c2VyM0BhZG1pbi5jb20iLCJleHAiOjE3Mzg0MDE5ODIsImlhdCI6MTczODM5ODM4Mn0.qqqIItO1CznM7kD3WS0D0_w0Giz9WrTvwQjK_HmSR0A"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"order_id\": \"0194481b-55cd-4f67-9eb3-8c3c9cd79588\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8000/order/status/"
+					},
+					"response": []
+				}
+			],
+			"description": "All requests to list products, add to cart and purchase them."
+		}
+	]
+}

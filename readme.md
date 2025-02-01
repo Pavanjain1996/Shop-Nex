@@ -2,11 +2,9 @@
 
 This project is a comprehensive e-commerce platform developed as part of capstone project module. It includes the following key services:
 
-- **Product Services**: Manage products, categories, and related details with efficient APIs.
 - **Authentication Services**: Secure user authentication and authorization mechanisms.
+- **Product Services**: List products, categories, manage cart and orders.
 - **Payment Services**: Seamless payment integration for processing transactions.
-- **Performance Optimization**: Leveraged **Redis** for caching and API performance enhancement.
-- **Deployment**: Deployed on AWS using an **EC2 instance** for robust scalability and reliability.
 
 ---
 
@@ -15,6 +13,13 @@ This project is a comprehensive e-commerce platform developed as part of capston
 - **Uername**: `admin`
 - **Email**: `admin@admin.com`
 - **Password**: `admin`
+
+---
+
+### Postman Collection
+
+- This project also includes a postman collection to execute all different kind of functionalities. The collection can be imported into postman and requests can be made.
+- Make sure to register a new user and perform all operations through that user, because existing parameters can be stale.
 
 ---
 

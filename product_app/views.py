@@ -312,7 +312,7 @@ def order_completed(request):
     return JsonResponse({
         "Message": "Your order is accepted!",
         "Order reference id": str(request.GET['order_id'])
-    })
+    }, safe=False, status=200)
 
 @require_http_methods(["POST"])
 @csrf_exempt
@@ -330,5 +330,29 @@ def order_status(request):
     
     return JsonResponse({
         "Message": "Status for your order!",
+        "Order ID": str(order.id),
         "Status": order.status
-    }, safe=False, status=400)
+    }, safe=False, status=200)
+
+@require_http_methods(["POST"])
+@csrf_exempt
+@token_required
+def order_cancel(request):
+    data = json.loads(request.body or '{}')
+    order_id = data.get('order_id')
+    print(data)
+    if not order_id:
+        return JsonResponse({"Message": "Missing order id!"}, safe=False, status=400)
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return JsonResponse({"Message": "Invalid order id!"}, safe=False, status=400)
+    
+    order.status = "CANCELLED"
+    order.save()
+
+    return JsonResponse({
+        "Message": "Status for your order!",
+        "Order ID": str(order.id),
+        "Status": order.status
+    }, safe=False, status=200)

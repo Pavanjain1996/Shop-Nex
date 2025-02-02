@@ -12,5 +12,6 @@ urlpatterns = [
     path('cart/checkout/', views.checkout_from_cart, name='checkout_from_cart'),
     path('payment/callback/', views.payment_callback, name="callback_url_for_payment"),
     path('order/completed/', views.order_completed, name='completed_order'),
-    path('order/status/', views.order_status, name='check_status_of_order')
+    path('order/status/', views.order_status, name='check_status_of_order'),
+    path('order/cancel/', views.order_cancel, name='cancel_order')
 ]

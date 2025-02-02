@@ -130,6 +130,17 @@ The product services handle all operations related to products and cart manageme
   ```
 - **Authentication:** **Required** 
 
+### **8. Cancel your order**  
+- **Endpoint:** `POST /order/cancel`  
+- **Description:** Cancel your successfully placed order
+- **Request Body:**  
+  ```json
+  {
+      "order_id": "0194481b-55cd-4f67-9eb3-8c3c9cd79588"
+  }
+  ```
+- **Authentication:** **Required** 
+
 ### **Validations & Security Measures:**  
 ✅ **Authentication:** All cart and order related operations require a **valid JWT token** for authorization.  
 ✅ **Product & Cart Validations:** Proper validation is implemented to ensure: data integrity.

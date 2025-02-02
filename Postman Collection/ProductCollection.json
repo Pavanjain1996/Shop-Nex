@@ -35,7 +35,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"testuser3\",\r\n    \"password\": \"test123\"\r\n}",
+							"raw": "{\r\n    \"username\": \"testuser1\",\r\n    \"password\": \"test123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -82,7 +82,7 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNTFhMjAyNTEtODFjOS00MjFiLWJjNDUtOTM4NjE4ZWFkMDFkIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjMiLCJlbWFpbCI6InRlc3R1c2VyM0BhZG1pbi5jb20iLCJleHAiOjE3Mzg0MDE5ODIsImlhdCI6MTczODM5ODM4Mn0.qqqIItO1CznM7kD3WS0D0_w0Giz9WrTvwQjK_HmSR0A"
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiODRkNmNmYzgtNzcxMi00YTM3LThiOGEtMDY5MTgzMGZkYTgwIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjEiLCJlbWFpbCI6InRlc3R1c2VyMUBhZG1pbi5jb20iLCJleHAiOjE3Mzg1MTgyMDcsImlhdCI6MTczODUxNDYwN30.lM4Rzrl-E1UyWbDMslGN2H7sNhE1ExEyzXpWydqRZtw"
 							}
 						},
 						"method": "GET",
@@ -97,14 +97,14 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNTFhMjAyNTEtODFjOS00MjFiLWJjNDUtOTM4NjE4ZWFkMDFkIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjMiLCJlbWFpbCI6InRlc3R1c2VyM0BhZG1pbi5jb20iLCJleHAiOjE3Mzg0MDE5ODIsImlhdCI6MTczODM5ODM4Mn0.qqqIItO1CznM7kD3WS0D0_w0Giz9WrTvwQjK_HmSR0A"
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiODRkNmNmYzgtNzcxMi00YTM3LThiOGEtMDY5MTgzMGZkYTgwIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjEiLCJlbWFpbCI6InRlc3R1c2VyMUBhZG1pbi5jb20iLCJleHAiOjE3Mzg1MTgyMDcsImlhdCI6MTczODUxNDYwN30.lM4Rzrl-E1UyWbDMslGN2H7sNhE1ExEyzXpWydqRZtw"
 							}
 						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"product_id\": \"1311c455-ba36-43b9-a2a1-2422817f39e2\",\r\n    \"quantity\": 2\r\n}",
+							"raw": "{\r\n    \"product_id\": \"83e53062-b539-44d3-a16e-008bdc2b47a0\",\r\n    \"quantity\": 2\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -145,7 +145,7 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNTFhMjAyNTEtODFjOS00MjFiLWJjNDUtOTM4NjE4ZWFkMDFkIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjMiLCJlbWFpbCI6InRlc3R1c2VyM0BhZG1pbi5jb20iLCJleHAiOjE3Mzg0MDE5ODIsImlhdCI6MTczODM5ODM4Mn0.qqqIItO1CznM7kD3WS0D0_w0Giz9WrTvwQjK_HmSR0A"
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiODRkNmNmYzgtNzcxMi00YTM3LThiOGEtMDY5MTgzMGZkYTgwIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjEiLCJlbWFpbCI6InRlc3R1c2VyMUBhZG1pbi5jb20iLCJleHAiOjE3Mzg1MTgyMDcsImlhdCI6MTczODUxNDYwN30.lM4Rzrl-E1UyWbDMslGN2H7sNhE1ExEyzXpWydqRZtw"
 							}
 						},
 						"method": "GET",
@@ -160,14 +160,14 @@
 						"auth": {
 							"type": "bearer",
 							"bearer": {
-								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNTFhMjAyNTEtODFjOS00MjFiLWJjNDUtOTM4NjE4ZWFkMDFkIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjMiLCJlbWFpbCI6InRlc3R1c2VyM0BhZG1pbi5jb20iLCJleHAiOjE3Mzg0MDE5ODIsImlhdCI6MTczODM5ODM4Mn0.qqqIItO1CznM7kD3WS0D0_w0Giz9WrTvwQjK_HmSR0A"
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiODRkNmNmYzgtNzcxMi00YTM3LThiOGEtMDY5MTgzMGZkYTgwIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjEiLCJlbWFpbCI6InRlc3R1c2VyMUBhZG1pbi5jb20iLCJleHAiOjE3Mzg1MTgyMDcsImlhdCI6MTczODUxNDYwN30.lM4Rzrl-E1UyWbDMslGN2H7sNhE1ExEyzXpWydqRZtw"
 							}
 						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"order_id\": \"0194481b-55cd-4f67-9eb3-8c3c9cd79588\"\r\n}",
+							"raw": "{\r\n    \"order_id\": \"39757701-a940-495b-8b50-891cb5ac951a\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -175,6 +175,30 @@
 							}
 						},
 						"url": "http://localhost:8000/order/status/"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiODRkNmNmYzgtNzcxMi00YTM3LThiOGEtMDY5MTgzMGZkYTgwIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjEiLCJlbWFpbCI6InRlc3R1c2VyMUBhZG1pbi5jb20iLCJleHAiOjE3Mzg1MTgyMDcsImlhdCI6MTczODUxNDYwN30.lM4Rzrl-E1UyWbDMslGN2H7sNhE1ExEyzXpWydqRZtw"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"order_id\": \"39757701-a940-495b-8b50-891cb5ac951a\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8000/order/cancel/"
 					},
 					"response": []
 				}

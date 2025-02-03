@@ -115,7 +115,7 @@ def get_product_by_id(request, product_id):
 @require_http_methods(["GET"])
 def get_categories(request):
     categories = Category.objects.all()
-    category_serializer = CategorySerializer(categories, many=True)
+    category_serializer = CategorySerializer(categories, many=True, context={'request': request, 'many': True})
     return JsonResponse(category_serializer.data, safe=False, status=200)
 
 @require_http_methods(["GET"])

@@ -63,7 +63,8 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'description', 'product_count', 'products_link']
 
     def get_products_link(self, obj):
-        return reverse('get_products_by_category', args=[obj.id])
+        request = self.context.get('request')
+        return request.build_absolute_uri(reverse('get_products_by_category', args=[obj.id]))
 
 class CartSerializer(serializers.ModelSerializer):
     product_id = serializers.ReadOnlyField(source='product.id')

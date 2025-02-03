@@ -201,6 +201,57 @@
 						"url": "http://localhost:8000/order/cancel/"
 					},
 					"response": []
+				},
+				{
+					"name": "List all categories of products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8000/categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Get products by category",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8000/products/3c85a568-4d18-4136-a166-fd179202fffc/"
+					},
+					"response": []
+				},
+				{
+					"name": "List all orders",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiODRkNmNmYzgtNzcxMi00YTM3LThiOGEtMDY5MTgzMGZkYTgwIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjEiLCJlbWFpbCI6InRlc3R1c2VyMUBhZG1pbi5jb20iLCJleHAiOjE3Mzg2MDY4MjgsImlhdCI6MTczODYwMzIyOH0.Tpf68X2ZwN8EHGOuTzTYxkAKPzFayiCBtR5cqLwuI3A"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8000/orders"
+					},
+					"response": []
+				},
+				{
+					"name": "Get order details by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiODRkNmNmYzgtNzcxMi00YTM3LThiOGEtMDY5MTgzMGZkYTgwIiwidXNlcm5hbWUiOiJ0ZXN0dXNlcjEiLCJlbWFpbCI6InRlc3R1c2VyMUBhZG1pbi5jb20iLCJleHAiOjE3Mzg2MDY4MjgsImlhdCI6MTczODYwMzIyOH0.Tpf68X2ZwN8EHGOuTzTYxkAKPzFayiCBtR5cqLwuI3A"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8000/order/39757701-a940-495b-8b50-891cb5ac951a"
+					},
+					"response": []
 				}
 			],
 			"description": "All requests to list products, add to cart and purchase them."

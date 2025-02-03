@@ -11,9 +11,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth import authenticate
 
-from .serializers import UserSerializer, ProductSerializer, CartSerializer
+from .serializers import UserSerializer, ProductSerializer, CartSerializer, CategorySerializer, OrderSerializer
 from django.core.paginator import Paginator
-from .models import User, Product, Cart, Order, OrderItem, Payment
+from .models import User, Product, Cart, Order, OrderItem, Payment, Category
 from .authentication_utils import generate_signed_token_for_user, token_required
 from .payment_utils import create_payment_link, verify_payment
 
@@ -111,6 +111,26 @@ def get_product_by_id(request, product_id):
     product_serializer = ProductSerializer(product)
 
     return JsonResponse(product_serializer.data, safe=False, status=200)
+
+@require_http_methods(["GET"])
+def get_categories(request):
+    categories = Category.objects.all()
+    category_serializer = CategorySerializer(categories, many=True)
+    return JsonResponse(category_serializer.data, safe=False, status=200)
+
+@require_http_methods(["GET"])
+def get_products_by_category(request, category_id):
+    try:
+        category = Category.objects.get(id=category_id)
+        products = Product.objects.filter(category=category)
+    except Exception:
+        return JsonResponse({"Message": "Invalid category ID"}, safe=False, status=400)
+    
+    if products:
+        product_serializer = ProductSerializer(products, many=True)
+        return JsonResponse(product_serializer.data, safe=False, status=200)
+
+    return JsonResponse({"Message": f"No products in {category.name} category!"}, safe=False, status=200)
 
 @require_http_methods(["GET"])
 @token_required
@@ -356,3 +376,25 @@ def order_cancel(request):
         "Order ID": str(order.id),
         "Status": order.status
     }, safe=False, status=200)
+
+@require_http_methods(["GET"])
+@token_required
+def get_orders(request):
+    orders = Order.objects.filter(user=request.user_data['user_id'])
+    if not orders:
+        return JsonResponse({"Message": "No orders!"}, safe=False, status=200)
+
+    serializer = OrderSerializer(orders, many=True, context={'request': request, 'many': True})
+
+    return JsonResponse(serializer.data, safe=False, status=200)
+
+@require_http_methods(["GET"])
+@token_required
+def get_order_by_id(request, order_id):
+    try:
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return JsonResponse({'Message': 'Invalid Order ID!'}, safe=False, status=400)
+    
+    order_serializer = OrderSerializer(order, context={'request': request})
+    return JsonResponse(order_serializer.data, safe=False, status=200)

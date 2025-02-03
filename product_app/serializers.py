@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.db.models import Avg
-from .models import User, Product, Cart
+from django.urls import reverse
+from .models import User, Product, Category, Cart
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -53,6 +54,17 @@ class ProductSerializer(serializers.ModelSerializer):
             'average': round(average, 2) if average else None
         }
 
+class CategorySerializer(serializers.ModelSerializer):
+    product_count = serializers.IntegerField(source='products.count', read_only=True)
+    products_link = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Category
+        fields = ['id', 'name', 'description', 'product_count', 'products_link']
+
+    def get_products_link(self, obj):
+        return reverse('get_products_by_category', args=[obj.id])
+
 class CartSerializer(serializers.ModelSerializer):
     product_id = serializers.ReadOnlyField(source='product.id')
     product_name = serializers.ReadOnlyField(source='product.name')
@@ -70,3 +82,46 @@ class CartSerializer(serializers.ModelSerializer):
 
     def get_amount(self, obj):
         return obj.quantity * obj.product.price
+
+from rest_framework import serializers
+from django.urls import reverse
+from product_app.models import Order, OrderItem
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    """Serializer for order items (only used when many=False)"""
+    product_name = serializers.CharField(source='product.name', read_only=True)
+
+    class Meta:
+        model = OrderItem
+        fields = ['product_name', 'quantity', 'amount']
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    """Serializer for Orders (Supports both list and detailed views)"""
+    order_id = serializers.UUIDField(source='id', read_only=True)
+    order_placed_date = serializers.DateTimeField(source='created_at', format='%Y-%m-%d %H:%M:%S', read_only=True)
+    item_count = serializers.IntegerField(source='items.count', read_only=True)
+    order_link = serializers.SerializerMethodField()
+    order_items = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Order
+        fields = ['order_id', 'item_count', 'total_amount', 'order_placed_date', 'order_link', 'order_items']
+
+    def get_order_link(self, obj):
+        """Generates link to order details page."""
+        request = self.context.get('request')
+        if self.context.get('many', False):
+            return request.build_absolute_uri(reverse('get_order_by_id', args=[obj.id]))
+        return None
+
+    def get_order_items(self, obj):
+        """Returns order items only when serializing a single order (many=False)."""
+        if not self.context.get('many', False):
+            return OrderItemSerializer(obj.items.all(), many=True).data
+        return None
+    
+    def to_representation(self, instance):
+        """Removes fields with None values"""
+        data = super().to_representation(instance)
+        return {key: value for key, value in data.items() if value is not None}

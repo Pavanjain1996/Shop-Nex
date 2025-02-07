@@ -152,12 +152,12 @@ The product services handle all operations related to products and cart manageme
 - **Authentication:** **Required** 
 
 ### **11. List all the orders**  
-- **Endpoint:** `POST /orders`  
+- **Endpoint:** `GET /orders`  
 - **Description:** List down all the orders created by you and also includes link to the detailed view of the order
 - **Authentication:** **Required** 
 
 ### **12. Fetch details of Order**  
-- **Endpoint:** `POST /order/<str:order_id>`  
+- **Endpoint:** `GET /order/<str:order_id>`  
 - **Description:** Show detais of the order by the given order ID
 - **Authentication:** **Required** 
 

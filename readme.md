@@ -75,14 +75,24 @@ The product services handle all operations related to products and cart manageme
 - **Description:** Fetches details of a specific product using its **product_id**.  
 - **Authentication:** **Not required**  
 
-### **3. View Cart**  
+### **3. List All Categories**  
+- **Endpoint:** `GET /categories`  
+- **Description:** Retrieves a list of all the categories, and also includes link to all products in that category.  
+- **Authentication:** **Not required** 
+
+### **4. List All Products in a Category**  
+- **Endpoint:** `GET /products/<str:category_id>`  
+- **Description:** Retrieves a list of all products in the given category.  
+- **Authentication:** **Not required** 
+
+### **5. View Cart**  
 - **Endpoint:** `GET /cart`  
 - **Description:** Displays the user's cart, listing all products along with their quantities. The response includes:  
   - A breakdown of the total price for each product.  
   - The **final total amount** for the entire cart.  
 - **Authentication:** **Required** (User must provide a valid token)  
 
-### **4. Add Product to Cart**  
+### **6. Add Product to Cart**  
 - **Endpoint:** `POST /cart/add`  
 - **Description:** Adds a product to the user's cart.  
 - **Behavior:**  
@@ -97,7 +107,7 @@ The product services handle all operations related to products and cart manageme
   ```
 - **Authentication:** **Required**  
 
-### **5. Remove Product from Cart**  
+### **7. Remove Product from Cart**  
 - **Endpoint:** `POST /cart/remove`  
 - **Description:** Removes an item completely or partially from the cart.  
 - **Behavior:**  
@@ -112,14 +122,14 @@ The product services handle all operations related to products and cart manageme
   ```
 - **Authentication:** **Required**  
 
-### **6. Checkout from Cart**  
+### **8. Checkout from Cart**  
 - **Endpoint:** `POST /cart/checkout`  
 - **Description:** Creates an order for you and send you a payment link to complete the payment, to confirm your order
 - **Behavior:**  
   - It creates an order for all items in your cart and empties the cart.
 - **Authentication:** **Required** 
 
-### **7. Check order status**  
+### **9. Check order status**  
 - **Endpoint:** `POST /order/status`  
 - **Description:** Once the payment is completed from the payment link received in previous request, it verifies the payment and moves you order for processing. You can check the status of your order from this path
 - **Request Body:**  
@@ -130,7 +140,7 @@ The product services handle all operations related to products and cart manageme
   ```
 - **Authentication:** **Required** 
 
-### **8. Cancel your order**  
+### **10. Cancel your order**  
 - **Endpoint:** `POST /order/cancel`  
 - **Description:** Cancel your successfully placed order
 - **Request Body:**  
@@ -139,6 +149,16 @@ The product services handle all operations related to products and cart manageme
       "order_id": "0194481b-55cd-4f67-9eb3-8c3c9cd79588"
   }
   ```
+- **Authentication:** **Required** 
+
+### **11. List all the orders**  
+- **Endpoint:** `POST /orders`  
+- **Description:** List down all the orders created by you and also includes link to the detailed view of the order
+- **Authentication:** **Required** 
+
+### **12. Fetch details of Order**  
+- **Endpoint:** `POST /order/<str:order_id>`  
+- **Description:** Show detais of the order by the given order ID
 - **Authentication:** **Required** 
 
 ### **Validations & Security Measures:**  
